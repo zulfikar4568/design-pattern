@@ -181,3 +181,83 @@ console.log(config.connect())
 ```
 
 Disini kita ingin password nya bocor, maka state profile tidak akan sampai bocor karena dia private. object `config` hanya bisa set dan get username dan password hanya bisa di set, tidak bisa di get dengan begitu password kita akan tetap aman.
+
+## Inheritance
+
+Inheritance adalah kemampuan untuk membuat class baru di atas class yang sudah ada, Tujuan inheritance adalah code dapat di reuse (digunakan kembali). Jika kita ingin membuat class yang sama state dan behaviour nya dengan sedikit tambahan, maka kita tidak perlu membuatnya dari nol, kita bisa buat dari class yang sudah ada dan kita menambahkan state dan behaviour nya (baru) atau bahkan kita bisa me replace yang sudah ada.
+
+Konsekuensi menggunakan inheritance adalah subclass akan mempunyai state dan behaviour yang sama. Kita tidak bisa menghilangkan state dan behavior yang ada subclass yang berasal dari parent classnya.
+
+Subclass hanya bisa 1 mempunyai parent class, sedangkan class dapat mengimplementasi banyak interface.
+
+```ts
+class Hewan {
+  public kaki: number;
+  public nama: string;
+  private rahasia: string = 'rahasia';
+  protected category: string = 'Hewan';
+  constructor(kaki: number, nama: string) {
+    this.kaki = kaki;
+    this.nama = nama;
+  }
+  suara() {}
+ }
+
+
+// Kucing "is a" Hewan
+// Hewan mewariskan ke Kucing
+class Kucing extends Hewan {
+  // Private tidak akan diturunkan ke subclass
+  // private rahasia: string = 'rahasia'; // TS[2415] Error
+
+  // Protected akan di turunkan ke subclass nya, tetapi protected tidak akan bisa di akses dari luar
+  protected category: string = 'Mamalia';
+  
+  constructor(kaki: number, nama: string) {
+    super(kaki, nama)
+  }
+  // Overriding Method
+  suara(): void {
+    console.log('Meowww')
+  }
+ }
+
+ const kucing1: Kucing = new Kucing(4, 'Ojan');
+//  kucing1.category // Protected hanya bisa di akses oleh subclass
+kucing1.kaki // Bisa di akses karena public
+```
+
+- public = bisa di akses di semua class / dari luar class
+- protected = hanya bisa di akses dari class tersebut, dan kelas turunannya
+- private = hanya bisa di akses dari class itu sendiri
+
+Pada class Hewan di atas class tersebut bisa dibuat instance nya, secara real world Hewan seharusnya tidak perlu dibuat instance nya.
+Dan jika dibuat instance pada class Hewan terdapat method suara() maka isinya akan kosong, untuk mengatasi ini kita bisa gunakan **abstract class**
+
+
+```ts
+// Abstract class tidak bisa di instantiate
+abstract class Hewan2 {
+  public kaki: number;
+  public nama: string;
+  private rahasia: string = 'rahasia';
+  protected category: string = 'Hewan';
+  constructor(kaki: number, nama: string) {
+    this.kaki = kaki;
+    this.nama = nama;
+  }
+  // Jika kita mengimplementasi abstract method maka di subclass nya harus mengimplementasi method suara(), dan jika tidak akan error TS[2515]
+  abstract suara(): void
+}
+
+class Kucing2 extends Hewan2 {
+  constructor(kaki: number, nama: string) {
+    super(kaki, nama)
+  }
+
+  // Method yang wajib
+  suara(): void {
+    console.log('Meowww')
+  }
+}
+```
