@@ -123,3 +123,61 @@ boeingReverse.reverseSeats(10)
 ```
 
 Dengan demikian aplikasi simulator tidak akan mempunyai seats, dan sebaliknya aplikasi booking.
+
+## Encapsulation
+Encapsulation adalah proses pembungkusan code dan data secara bersama menjadi kesatuan unit, seperti sebuah kapsul tablet yang isinya bisa banyak beberapa bahan obat. Terkadang konsep ini juga digunakan untuk menyembunyikan informasi atau state sebuah object dari luar, yang biasa di panggil **Information Hidding**
+
+Berikut contoh, bayangkan jika kita mempunyai class Configurator yang berfungsi untuk mengkoneksikan ke sebuah Sistem. Di class ini kita harus set username dan password, tetapi kita ingin password kita aman, maka contoh sederhana kita pakai sebuah Decryptor. Decryptor ini akan mengubah sandi rahasia ke dalam real password.
+
+Andaikata kita punya sistem dengan user dan pass seperti ini
+```ts
+const userApp: string = 'zulfikar'
+const passwordApp: string = 'password_real123'
+```
+
+Lalu kita ingin konekan sistem tersebut dengan aman menggunakan class Configurator, yang mana password nya tidak boleh bocor
+```ts
+class Configurator {
+  private _username: string;
+  private _password: string;
+
+  constructor(username: string, passwordHash: string) {
+    this._username = username
+    this._password = Decrytor.decrypSomeString(passwordHash)
+  }
+
+  // Setter
+  set passwordHash(pass: string) {
+    this._password = Decrytor.decrypSomeString(pass)
+  }
+
+  // Getter
+  get username(): string {
+    return this._username
+  }
+
+
+  // Setter
+  set username(user: string) {
+    this._username = user;
+  }
+
+  connect(): string {
+    if (this._password === passwordApp && this._username === userApp) return "Connected !"
+    else return "Disconnected!";
+  }
+}
+
+// Class Decryptor
+class Decrytor {
+  static decrypSomeString(val: string): string {
+    if (val === "asjdh123oiuh3umbc3gy2392") return "password_real123";
+    else return "oiasdbwubdspowe0231hy491"
+  }
+}
+
+const config: Configurator = new Configurator("zulfikar", "asjdh123oiuh3umbc3gy2392");
+console.log(config.connect())
+```
+
+Disini kita ingin password nya bocor, maka state profile tidak akan sampai bocor karena dia private. object `config` hanya bisa set dan get username dan password hanya bisa di set, tidak bisa di get dengan begitu password kita akan tetap aman.
