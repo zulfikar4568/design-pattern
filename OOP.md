@@ -4,10 +4,11 @@ Object Oriented Programming (OOP) adalah paradigma dasar pada konsep membungkus 
 
 # Pilar OOP
 OOP mempunyai 4 pilar yaitu:
-- Abstraction
-- Encapsulation
-- Inheritance
-- Polymorpishm
+
+  - [Abstraction](#abstraction)
+  - [Encapsulation](#encapsulation)
+  - [Inheritance](#inheritance)
+  - [Polymorphism](#polymorphism)
 
 ## Abstraction
 - Abstraction hanya menampilkan attribute yang relavant dari sebuah object dan sembunyikan attribute yang tidak relavant
@@ -261,3 +262,92 @@ class Kucing2 extends Hewan2 {
   }
 }
 ```
+
+## Polymorphism
+(Poly = banyak), (Morphism = Bentuk) yakni banyak bentuk, langsung pada contoh berikut terdapat parent class Anjing, dan class Anjing mempunyai subclass AnjingPitbull, AnjingBuldog, AnjingCihuwa.
+- AnjingPitbull, AnjingBuldog, AnjingCihuwa merupakan Anjing
+- AnjingBuldog bukan merupakan AnjingCihuwa dan sebaliknya
+- Anjing bukan merupakan AnjingCihuwa
+
+```ts
+class Anjing {
+  nama: string;
+  constructor(nama: string) {
+    this.nama = nama
+  }
+
+  display(): void{
+    console.log(`Nama: ${this.nama}`)
+  }
+}
+
+class AnjingBuldog extends Anjing{
+  type: string = "AnjingBuldog";
+  constructor(nama: string) {
+    super(nama)
+  }
+
+  display(): void {
+    super.display()
+    console.log(`Type: ${this.type} \n`)
+  }
+}
+
+class AnjingPitbull extends Anjing {
+  type: string = "AnjingPitbull";
+  constructor(nama: string) {
+    super(nama)
+  }
+
+  display(): void {
+    super.display()
+    console.log(`Type: ${this.type} \n`)
+  }
+}
+
+class AnjingCihuwa extends Anjing {
+  type: string = "AnjingCihuwa";
+  constructor(nama: string) {
+    super(nama)
+  }
+
+  display(): void {
+    super.display()
+    console.log(`Type: ${this.type} \n`)
+  }
+
+  showOff() {
+    console.log(`Aku adalah ${this.type}`)
+  }
+
+}
+
+const anjing1: Anjing = new Anjing("jack")
+const anjing2: AnjingPitbull = new AnjingPitbull("ucup")
+anjing1.display()
+anjing2.display()
+
+//Polymorphic
+const anjing3: AnjingCihuwa = new AnjingCihuwa("alex")
+anjing3.display()
+anjing3.showOff()
+
+// const anjing4: AnjingCihuwa = new AnjingBuldog("abah") // Akan Error karena Anjing Cihuwa bukan Anjing Pitbull
+// const anjing4: AnjingBuldog = new Anjing("opang") // Error
+
+const anjing4: AnjingBuldog = new AnjingBuldog("Abah")
+anjing4.display()
+
+const kumpulanAnjing: Anjing[] = [anjing1, anjing2, anjing3, anjing4]
+
+// display
+kumpulanAnjing[0].display()
+kumpulanAnjing[1].display()
+kumpulanAnjing[2].display()
+kumpulanAnjing[3].display()
+
+// show off
+// kumpulanAnjing[3].showOff() // Ini akan error karena type nya bukan lagi AnjingCihuwa
+```
+
+Dengan ini kita bisa mempunyai berbagai jenis Anjing dalam class Anjing
