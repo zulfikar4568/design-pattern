@@ -1,5 +1,5 @@
 - [OOP](./OOP.md)
-- Design Principles
+- [Design Principles](./DesignPrinciple.md)
 - Creational Design Pattern
 - Structural Design Pattern
 - Behavioral Design Pattern
