@@ -1,3 +1,11 @@
+- [Design Principle](#design-principle)
+  - [Encapsulation What Varies](#encapsulation-what-varies)
+    - [Enkapsulasi pada level method](#enkapsulasi-pada-level-method)
+    - [Enkapsulasi pada Level Class](#enkapsulasi-pada-level-class)
+  - [Program to an Interface, not an Implementation](#program-to-an-interface-not-an-implementation)
+  - [SOLID Principle](#solid-principle)
+    - [[S]ingle Responsibility Principle](#single-responsibility-principle)
+    - [[O]pen / Closed Principle](#open--closed-principle)
 # Design Principle
 Desain software yang baik seperti apa? Bagaimana cara mengukurnya? Practices apa yang dibutuhkan untuk hal tersebut? Bagaimana cara membuat arsitektur sistem kita flexible, stabil dan mudah di mengerti?
 
@@ -316,3 +324,140 @@ const gameTech = new GameDevCompany([jack, alex]);
 const outsourcing = new OutsourcingCompany([zul, akib]);
 gameTech.createSoftware()
 ```
+
+
+## SOLID Principle
+
+SOLID merupakan singkatan dari lima design principle untuk membuat software lebih mudah dimengerti, fleksibel, dan mudah di manage.
+
+Tapi jika kita salah menggunakan prinsip ini bisa membuat tambah rumit dari pada bagus, dan mungkin cost juga bisa meningkat dari pada seharusnya
+
+
+### [S]ingle Responsibility Principle
+`A class should have one reason to change`
+
+Tujuan prinple ini adalah untuk mengurangi ke kompleks-an. Namun jika hanya menulis sedikit baris code misal di bawah 200, kita tidak perlu mengimplementasi kan ini, kita cukup membuat nya dengan rapih aja sudah cukup.
+
+Masalah ini muncul pada saat jika program kita secara konstan berubah dan berkembang, pada titik tertentu class menjadi sangat besar, dan kita tidak bisa lagi mengingatnya, dan kita harus banyak scroll panjang class untuk mencari seluruh program atau butuh mencari hal tertentu saja. Dan kita tidak bisa lagi meng kontrol class ini karena terlalu besar.
+
+Jika class nya terlalu banyak mengerjakan hal, maka kita harus mengubah nya setiap kali ada salah satu yang berubah, dan saat kita mengubah akan menjadi riskan karena bisa saja malah merusak yang sudah ada.
+
+Jika saat kita menemukan kesulitan saat memfokuskan kepada satu aspek, mungkin kita bisa menentukan kapan kita harus membagi-bagi class tersebut dengan SRP.
+
+Contoh masalah:
+```ts
+// One class have many responsibility
+class Vehicle {
+   getType() {}
+   getEngineOil() {}
+   getTypeRims() {}
+   getBody() {}
+}
+```
+
+Solusi:
+```ts
+// One class Have one responsibility
+class Vehicle {
+ ambilJenisKendaraan() {}
+}
+ 
+class Engine {
+ getEngineOil() {}
+}
+ 
+class Rims {
+ getTypeRims() {}
+}
+ 
+class Body {
+ getBody() {}
+}
+```
+
+### [O]pen / Closed Principle
+`Classes should be open for extension but closed for modification.` 
+
+Tujuan dari prinsip ini adalah untuk menjaga kode yang sudah ada dari kerusakan ketika kita menambahkan kode baru.
+
+Open disini adalah maksudnya bahwa sebuah class bisa di extend dengan membuat subclass apakah itu akan di tambah method baru, state, atau override method. Closed di sini maksudnya ketika kita ingin meng-extend atau menambah sesuatu kita seharusnya tidak memodifikasi yang sudah ada.
+
+Jika sebuah class sudah di develop, di test, di review, dan sudah di pakai di aplikasi, mencoba untuh mengubah - ubah nya akan menjadi beresiko, dari pada kita mengubah code langsung pada class tersebut lebih baik kita membuat subclass dengan behaviour yang berbeda.
+
+Jika ada bug pada class langsung solve kan dan perbaiki, jangan bikin subclass, karena subclass tidak seharusnya bertanggung jawab atas issue di parent class.
+
+Contoh masalah:
+```ts
+class Rectangle {
+ width: number;
+ height: number;
+ constructor(_width: number, _height: number) {
+   this.width = _width;
+   this.height = _height;
+ }
+}
+class Circle {
+ radius: number;
+ phi: 3.14;
+ constructor(_radius: number) {
+   this.radius = _radius;
+ }
+}
+ 
+function AreaTotal(shape: (Rectangle | Circle)[]): number {
+ let area: number = 0;
+ shape.forEach(element => {
+   if (element instanceof Rectangle) {
+     area += element.height * element.height;
+   } else if (element instanceof Circle) {
+     area += element.phi * element.radius * element.radius;
+   }
+ });
+ return area;
+}
+```
+
+Pada masalah ini Rectangle dan Circle di hardcode pada function Area Total. Pertanyaan nya jika kita ingin menambah katakanlah Square, kita harus mengubah function AreaTotal.
+
+Solusi:
+```ts
+abstract class Shape {
+ abstract area(): number;
+}
+ 
+class Rectangle extends Shape {
+ width: number;
+ height: number;
+ constructor(_width: number, _height: number) {
+   super()
+   this.width = _width;
+   this.height = _height;
+ }
+ area(): number {
+   return this.width * this.height;
+ }
+}
+ 
+class Circle extends Shape {
+ radius: number;
+ phi: 3.14;
+ constructor(_radius: number) {
+   super()
+   this.radius = _radius;
+ }
+ area(): number {
+   return this.radius^2 * this.phi;
+ }
+}
+ 
+// if we want to add shape we shouldn't to modify this function (close for modification), instead we extended shape(open for modification)
+function AreaTotal(shapes: Shape[]) {
+ let area: number = 0;
+ shapes.forEach(element => {
+   area += element.area();
+ });
+ return area;
+}
+```
+
+sekarang solusinya kita bisa menambahkan polymorpishm sehingga kita tidak harus mengubah function AreaTotal, cukup dengan meng-extends class Shape, maka kita akan mendapatkan behaviour yang sama.

@@ -1,14 +1,16 @@
+- [OOP](#oop)
+- [Pilar OOP](#pilar-oop)
+  - [Abstraction](#abstraction)
+  - [Encapsulation](#encapsulation)
+  - [Inheritance](#inheritance)
+  - [Polymorphism](#polymorphism)
+
 # OOP
 Object Oriented Programming (OOP) adalah paradigma dasar pada konsep membungkus sekumpulan state dan behavior pada suatu data kedalam spesial bundles yang dipanggil **objects**. Yang mana di konstruksi dari set **Blueprints** yang di definisikan oleh `Programmers` di sebut dengan **Class**
 
 
 # Pilar OOP
-OOP mempunyai 4 pilar yaitu:
-
-  - [Abstraction](#abstraction)
-  - [Encapsulation](#encapsulation)
-  - [Inheritance](#inheritance)
-  - [Polymorphism](#polymorphism)
+OOP mempunyai 4 pilar yaitu:  [Abstraction](#abstraction),  [Encapsulation](#encapsulation), [Inheritance](#inheritance), [Polymorphism](#polymorphism)
 
 ## Abstraction
 - Abstraction hanya menampilkan attribute yang relavant dari sebuah object dan sembunyikan attribute yang tidak relavant
