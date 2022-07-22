@@ -6,6 +6,9 @@
   - [SOLID Principle](#solid-principle)
     - [[S]ingle Responsibility Principle](#single-responsibility-principle)
     - [[O]pen / Closed Principle](#open--closed-principle)
+    - [[L]iskov Subtitution Principle](#liskov-subtitution-principle)
+    - [[I]nterface Segregation Principle](#interface-segregation-principle)
+    - [[D]ependency Inversion principle](#dependency-inversion-principle)
 # Design Principle
 Desain software yang baik seperti apa? Bagaimana cara mengukurnya? Practices apa yang dibutuhkan untuk hal tersebut? Bagaimana cara membuat arsitektur sistem kita flexible, stabil dan mudah di mengerti?
 
@@ -461,3 +464,325 @@ function AreaTotal(shapes: Shape[]) {
 ```
 
 sekarang solusinya kita bisa menambahkan polymorpishm sehingga kita tidak harus mengubah function AreaTotal, cukup dengan meng-extends class Shape, maka kita akan mendapatkan behaviour yang sama.
+
+### [L]iskov Subtitution Principle
+`When extending a class, remember that you should be able pass the objects of the subclass in place of objects of parent class without breaking the client code.`
+
+Maksudnya adalah subclass harus tetap kompatibel dengan behaviour superclass ketika kita mengoverride method atau extend base class
+Berikut checklist detailsnya:
+
+1. Tipe parameter di method class pada subclass harus cocok atau lebih abstract dibandingkan dengan tipe parameter di method superclass.
+
+   - Contoh method yang memberi makan kucing `feed(Cat c)`
+   - **Bagus :** Kita membuat method nya menjadi `feed(Animal c)`, dengan ini bagus jika kita membuat subclass dan kita membuat semua jenis animal (misal Cat) yang di extend dari Animal, maka ini masih tetap kompatibel, karena Cat merupakan Animal.
+   - **Buruk :** Kita membuat method nya menjadi `feed(AnggoraCat c)`, dengan ini jika kita membuat subclass maka subclass hanya bisa di isi jenis AnggoraCat aja tidak bisa di ganti dengan hewan lain.
+
+2. Tipe return di dalam method subclass harus match harus merupak subtype dari return pada parent class.
+
+  - Contoh kita mempunyai method `buyCat(): Cat`.
+  - **Bagus :** Lalu subclass membuat override `buyCat(): AnggoraCat` karena kita membuat class Cat maka return juga harus berupa tipe Cat
+  - **Jelek :** jika subclass membuat override `buyCat(): Animal` karena kita membuat class Cat jika return Animal ini makan akan menjadi buruk karena Animal bisa saja berupa Anjing, Gajah, Burung dll.
+
+3. Method pada subclass seharusnya tidak membuat tipe throw Exception yang berbeda dengan Tipe throw Exception pada Base class. dengan kata lain tipe Exception harus cocok atau subtype dari base tipe exception yang sudah ada pada Base class.
+
+Contoh:
+```ts
+class Rectangle {
+ constructor(private width: number, private length: number) {}
+ 
+ public setWidth(width: number) {
+   this.width = width;
+ }
+ 
+ public setLength(length: number) {
+   this.length = length;
+ }
+ 
+ public getArea() {
+   return this.width * this.length;
+ }
+}
+ 
+class Square extends Rectangle3 {
+ constructor(side: number) {
+   super(side, side);
+ }
+ 
+ public setWidth(width: number) {
+   super.setWidth(width);
+   super.setLength(width);
+ }
+ 
+ public setLength(length: number) {
+   super.setWidth(length);
+   super.setLength(length);
+ }
+}
+ 
+ 
+const rect: Rectangle = new Square(5);
+rect.setWidth(10) // i want expect the result is (5*10)
+console.log(rect.getArea()) // but the actual is (10*10)
+```
+
+Pada contoh di atas kita telah melanggar aturan LSP, karena jika kita ingin membuat Rectangle tetapi kita membuatnya dengan Square akan menghasilkan nilai yang berbeda, pada kasus di atas seharusnya 10*10 namun kenyatannya 5*10.
+
+### [I]nterface Segregation Principle
+`Client shouldn't be forced to depend on method they do not used.`
+
+Contoh masalah #ISP 1:
+```ts
+interface IVehicle {
+ getSpeed() : number;
+ getVehicleType: string;
+ isTaxPayed() : boolean;
+ isLightsOn() : boolean;
+ isLightsOff() : boolean;
+ startEngine() : void;
+ accelerate() : number;
+ stopEngine() : void;
+ startRadio() : void;
+ playCd : void;
+ stopRadio() : void;
+}
+```
+Masalah pada code di atas kita mempunyai interface yang terlalu besar sehingga tidak fleksibel.
+
+Solusi untuk masalah #ISP 1
+```ts
+interface IVehicle {
+ getSpeed() : number;
+ getVehicleType: string;
+ isTaxPayed() : boolean;
+ isLightsOn() : boolean;
+}
+ 
+interface ILights {
+ isLightsOn() : boolean;
+ isLightsOff() : boolean;
+}
+ 
+interface IRadio {
+ startRadio() : void;
+ playCd : void;
+ stopRadio() : void;
+}
+ 
+interface IEngine {
+ startEngine() : void;
+ acelerate() : number;
+ stopEngine() : void;
+}
+```
+Daripada kita membuat interface yang besar kebih baik kita men split interface agar lebih flexible, contoh jika kita hanya ingin meng instantiate untuk Engine maka kita hanya butuh Engine Interface.
+
+Contoh masalah #ISP 2
+```ts
+interface Animal {
+ eat(): void;
+ layEggs(): void;
+ givingbirth(): void;
+}
+ 
+// Duck shouldn't implement givingBirth since duck is layEggs
+interface Duck extends Animal {
+ eat(): void;
+ layEggs(): void;
+ givingbirth(): void;
+}
+// Cat shouldn't implement layEggs  since cat is givingBirth
+interface Cat extends Animal {
+ eat(): void;
+ layEggs(): void; // Cat shouldn't have this
+ givingbirth(): void;
+}
+```
+Pada contoh diatas seharusnya Duck tidak mempunyai givingbirth() karena bebek tidak melahirkan melainkan bertelur dan begitu pula sebaliknya Cat seharusnya tidak mempunyai layEggs() karena Cat melahirkan.
+
+Solusi masalah #ISP 2
+```ts
+interface Animal {
+ eat(): void;
+}
+ 
+interface Mammals extends Animal {
+ eat(): void;
+ givingBirth(): void;
+}
+ 
+interface Vertebrae extends Animal {
+ eat(): void;
+ layEggs(): void;
+}
+ 
+interface Duck extends Vertebrae {
+ eat(): void;
+ layEggs(): void;
+}
+ 
+interface Cat extends Mammals {
+ eat(): void;
+ givingbirth(): void;
+}
+```
+
+### [D]ependency Inversion principle
+`High level classes shouldn't depend on low-level classes. Both should depend on abstractions. Abstraction shouldn't depend on details. Details should depend on abstractions.` 
+
+Kadang saat mendefine sebuah software dibedakan menjadi dua level pada class.
+
+- **Low level classes:** mengimplementasi dasar operasi seperti operasi disk, I/O, transfer data ke jaringan, koneksi ke database, dll.
+- **High level classess:** Mengandung logika bisnis yang kompleks yang terhubung langsung pada low level clasess untuk mengerjakan sesuatu.
+
+Contoh masalah #DIP 1:
+
+Pada gambar dibawah BudgetReport menggunakan Database class untuk menyimpan data, Dan ketika Low level class (Database) berubah kemungkinan mem-pengaruhi High level class (Budget Report), yang mana Budget Report tidak peduli jika Low Level class terdapat perubahan.
+
+```ts
+class BudgetInterface {
+  db: Database;
+  constructor(db: Database) {
+    this.db = db;
+  }
+  open(): void {};
+  save(): void {
+    this.db.insert();
+  };
+}
+
+class Database {
+  insert(): void {};
+  update(): void {};
+  delete(): void {};
+}
+```
+
+Kita bisa memfix-an masalah ini dengan menambahkan interface abstract di tengah nya, dan kita bisa mengganti extend BudgetReport ke interface ini.
+
+```ts
+class BudgetInterface {
+  db: IDatabase;
+  constructor(db: IDatabase) {
+    this.db = db;
+  }
+  open(): void {};
+  save(): void {
+    this.db.insert();
+  };
+}
+
+interface IDatabase {
+  insert(): void;
+  update(): void;
+  delete(): void;
+}
+
+class MYSQL implements IDatabase {
+  insert(): void {};
+  update(): void {};
+  delete(): void {};
+}
+
+class MongoDB implements IDatabase {
+  insert(): void {};
+  update(): void {};
+  delete(): void {};
+}
+
+const budgetInterface: BudgetInterface = new BudgetInterface(new MongoDB);
+const budgetInterface2: BudgetInterface = new BudgetInterface(new MYSQL);
+```
+
+Contoh masalah #DIP 2:
+Pada kali ini Logger class akan digunakan pada class Product, Pada kasus ini Product akan bergantung kepada Logger `private logger = new Logger();`, permasalahan nya kita tidak bisa men test nya secara terpisah.
+
+```ts
+//Low Level
+class Logger {
+ log(message: string) {
+   console.log(message);
+ }
+ error(message: string) {
+   console.log(message);
+ }
+}
+ 
+// High Level
+class Product {
+ private logger = new Logger();
+ async getAllProduct() {
+   try {
+     this.logger.log('Success get all products!');
+     return [];
+   } catch (error) {
+     this.logger.log(error.message);
+     throw new Error('Something Wrong');
+   }
+ }
+}
+```
+
+Untuk menyelesaikan msalah ini kita bisa menggunakan Dependency Injection, sekarang logger sudah tidak di instantiate lagi, tetapi Product masih bergantung pada class Logger
+
+```ts
+// Low Level
+class Logger {
+ log(message: string) {
+   console.log(message);
+ }
+ error(message: string) {
+   console.log(message);
+ }
+}
+
+// High Level
+class Product {
+ private logger: Logger;
+ constructor(_logger: Logger){
+   this.logger = _logger;
+ }
+ async getAllProduct() {
+   try {
+     this.logger.log('Success get all products!');
+     return [];
+   } catch (error) {
+     this.logger.log(error.message);
+     throw new Error('Something Wrong');
+   }
+ }
+}
+```
+
+Kita bisa gunakan Dependency Inversion Principle, dan mengubah product menjadi bergantung pada abstract interface, sehingga product sudah tidak peduli lagi dengan class Logger, dan dia bergantung pada abstract interface.
+
+```ts
+class Logger implements ILogger {
+ log(message: string) {
+   console.log(message);
+ }
+ error(message: string) {
+   console.log(message);
+ }
+}
+ 
+interface ILogger {
+ log(message: string): void;
+ error(message: string): void;
+}
+ 
+class Product {
+ private logger: ILogger;
+ constructor(_logger: ILogger){
+   this.logger = _logger;
+ }
+ async getAllProduct() {
+   try {
+     this.logger.log('Success get all products!');
+     return [];
+   } catch (error) {
+     this.logger.log(error.message);
+     throw new Error('Something Wrong');
+   }
+ }
+}
+```
