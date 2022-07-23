@@ -1,0 +1,36 @@
+@startuml FactoryMethod
+
+class AbstractPabrikSmartphone {
+  ...
+  +bikinSesuatu(): void
+  +hasilProduct(): ISmartphone
+}
+
+class PabrikSamsung extends AbstractPabrikSmartphone {
+  ...
+  +hasilProduct(): ISmartphone
+}
+
+class PabrikIphone extends AbstractPabrikSmartphone {
+  ...
+  +hasilProduct(): ISmartphone
+}
+
+interface ISmartphone {
+  ...
+  +bikinProduct(): void
+}
+
+class Samsung implements ISmartphone {
+  ...
+  +bikinProduct(): void
+}
+
+class Iphone implements ISmartphone {
+  ...
+  +bikinProduct(): void
+}
+
+AbstractPabrikSmartphone --> ISmartphone
+
+@enduml
