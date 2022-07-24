@@ -1,0 +1,36 @@
+@startuml Builder
+
+interface Builder {
+  ...
+  + reset(): void
+  + buatKursi(jumlah: number): void
+  + buatEngine(engine: string): void
+  + buatGPS(): void
+  + buatRem(): void
+}
+
+class MobilBuilder implements Builder{
+  mobil: Builder
+  + reset(): void
+  + buatKursi(jumlah: number): void
+  + buatEngine(engine: string): void
+  + buatGPS(): void
+  + buatRem(): void
+}
+
+MobilBuilder --> Mobil
+
+class Mobil {
+  + parts: string[] = [];
+  + listPart (): void
+}
+
+class Director {
+  builder: Builder
+  + bikinMobilBiasa(): void
+  + bikinMobilCanggih(): void
+}
+
+Director o-> Builder
+
+@enduml
