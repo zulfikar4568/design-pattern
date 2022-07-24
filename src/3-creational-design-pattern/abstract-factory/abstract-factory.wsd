@@ -1,0 +1,48 @@
+@startuml AbstractFactory
+
+interface IKursi {
+  adaKaki(): boolean
+}
+
+class KursiLama implements IKursi {
+  adaKaki(): boolean
+}
+
+class KursiBaru implements IKursi {
+  adaKaki(): boolean
+}
+
+interface ISofa {
+  menggunakanBusa(): boolean
+}
+
+class SofaLama implements ISofa {
+  menggunakanBusa(): boolean
+}
+
+class SofaModern implements ISofa {
+  menggunakanBusa(): boolean
+}
+
+interface AbstractPabrikProperti {
+  buatKursi(): IKursi
+  buatSofa(): ISofa
+}
+
+class PabrikPropertiLama implements AbstractPabrikProperti {
+  buatKursi(): IKursi { return new KursiLama() }
+  buatSofa(): ISofa { return new SofaLama() }
+}
+
+class PabrikPropertiModern implements AbstractPabrikProperti {
+  buatKursi(): IKursi { return new KursiModern() }
+  buatSofa(): ISofa { return new SofaModern() }
+}
+
+PabrikPropertiLama --|> SofaLama
+PabrikPropertiLama --|> KursiLama
+
+PabrikPropertiModern --|> SofaModern
+PabrikPropertiModern --|> KursiModern
+
+@enduml
