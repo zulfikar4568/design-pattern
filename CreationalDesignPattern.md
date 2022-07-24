@@ -239,3 +239,8 @@ console.log('Bikin mobil Canggih: ')
 director.bikinMobilCanggih()
 builder.getProductResult().listPart()
 ```
+
+## Prototype
+
+Prototype merupakan Creational Design Patterns yang bisa meng copy object yang sudah ada tanpa membuat code kita bergantung pada class dari object tersebut.
+
