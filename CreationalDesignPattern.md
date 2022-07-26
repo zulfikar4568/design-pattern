@@ -244,3 +244,38 @@ builder.getProductResult().listPart()
 
 Prototype merupakan Creational Design Patterns yang bisa meng copy object yang sudah ada tanpa membuat code kita bergantung pada class dari object tersebut.
 
+```ts
+abstract class IProductionOrder {
+  abstract produk: string;
+  abstract negara: string;
+  abstract kota: string;
+}
+
+class ProductionOrder implements IProductionOrder {
+  produk: string;
+  negara: string;
+  kota: string;
+  private harga: number;
+  constructor(produk: string, negara: string, kota: string, harga: number) {
+    this.produk = produk;
+    this.negara = negara;
+    this.kota = kota;
+    this.harga = harga
+  }
+
+  getHarga(): number {
+    return this.harga
+  }
+
+  clone(): ProductionOrder {
+    return this
+  }
+}
+
+const order1 = new ProductionOrder('Chitato', 'Indonesia', 'Jakarta', 3000);
+const order2 = new ProductionOrder('Taro', 'Indonesia', 'Jakarta', 3000);
+const order3 = order1.clone()
+order3.produk = 'Kremez'
+
+console.log(order3)
+```
